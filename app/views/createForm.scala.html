@@ -1,0 +1,25 @@
+@(entryForm: Form[Entry])
+
+@import helper._
+
+@main {
+    
+    <h1>Add an entry</h1>
+    
+    @form(routes.Application.save()) {
+        
+        <fieldset>
+          
+            @select(entryForm("entryType"), options(EntryType.options), 'label -> "Type", 'default -> "-- Choose a type --")(twitterBootstrapInput)
+            @inputText(entryForm("text"), 'label -> "Text")(twitterBootstrapInput)
+            @inputText(entryForm("settings"), 'label -> "Setting")(twitterBootstrapInput)
+
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Create this entry"> or <a href="@routes.Application.index()">Cancel</a> 
+        </div>
+        
+    }
+    
+}

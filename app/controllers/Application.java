@@ -1,14 +1,35 @@
 package controllers;
 
-import play.*;
-import play.mvc.*;
+import java.util.List;
 
-import views.html.*;
+import models.Entry;
+import play.data.Form;
+import play.mvc.Controller;
+import play.mvc.Result;
+import views.html.createForm;
+import views.html.index;
 
 public class Application extends Controller {
   
   public static Result index() {
-    return ok(index.render("Your new application is trololol."));
+      List<Entry> entries = Entry.find.all();
+      return ok(index.render(entries));
   }
   
+  public static Result create() {
+      Form<Entry> entryForm = form(Entry.class);
+      return ok(
+          createForm.render(entryForm)
+      );
+  }
+  
+  public static Result save() {
+      Form<Entry> entryForm = form(Entry.class).bindFromRequest();
+      if(entryForm.hasErrors()) {
+          return badRequest(createForm.render(entryForm));
+      }
+      entryForm.get().save();
+      flash("success", "Entry " + entryForm.get().id + " has been created");
+      return index();
+  }
 }

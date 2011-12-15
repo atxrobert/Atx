@@ -1,7 +1,73 @@
-@(message: String)
+@(entries: List[Entry])
 
-@main("Welcome to Play 2.0 beta") {
-    
-    @play20.welcome(message)
-    
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(title:String) = {
+    <th>@title</a></th>
 }
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Atx Display GUI</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" type="text/css">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="https://www.google.com/jsapi?key=ABQIAAAAqjnNz7nS1oz2TluL6Us4RBSpx2xMF55H3f_A7npDT_KAwe27TRQqEtzezEqGCWq0NKFUH-hM4U_cnQ"type="text/javascript"></script>
+      <script language="Javascript" type="text/javascript">
+      google.load("jquery", "1");
+      google.load("jqueryui", "1");
+      </script>
+    <script>
+      $(function() {
+        $( "#radio" ).buttonset();
+      });
+      </script>
+    </head>
+    <body>
+    <div class="demo">
+    <form>
+      <div id="radio">
+        <input type="radio" id="radio1" name="radio" /><label for="radio1">Choice 1</label>
+        <input type="radio" id="radio2" name="radio" checked="checked" /><label for="radio2">Choice 2</label>
+        <input type="radio" id="radio3" name="radio" /><label for="radio3">Choice 3</label>
+      </div>
+    </form>
+
+    </div>
+    
+    <div>
+      @if(entries.size == 0) {
+          
+          <div class="well">
+              <em>Nothing to display</em>
+          </div>
+          
+      } else {
+          
+          <table class="computers zebra-striped">
+              <thead>
+                  <tr>
+                      @header("Id")
+                      @header("Type")
+                      @header("Text")
+                      @header("Settings")
+                  </tr>
+              </thead>
+              <tbody>
+  
+                  @for(entry <- entries) {
+                      <tr>
+                          <td>@entry.id</td>
+                          <td>@entry.entryType</td>
+                          <td>@entry.text</td>
+                          <td>@entry.settings</td>
+                      </tr>
+                  }
+      }
+    </div>
+      <div><a id="add" href="@routes.Application.create()">Add a new entry</a></div>
+    </body>
+</html>
