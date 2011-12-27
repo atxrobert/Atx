@@ -5,6 +5,7 @@
 
 create table entry (
   id                        bigint not null,
+  position                  integer,
   entry_type                integer,
   text                      varchar(255),
   settings                  varchar(255),

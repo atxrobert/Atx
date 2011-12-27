@@ -11,6 +11,9 @@ public class Entry extends Model {
     
   @Id
   public Long id;
+  
+  @Constraints.Required
+  public int position;
 
   @Constraints.Required
   public EntryType entryType;

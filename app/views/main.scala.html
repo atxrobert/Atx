@@ -3,17 +3,22 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Entry database</title>
+        <title>Atx Display GUI</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")"> 
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")"> 
+   		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" type="text/css">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="https://www.google.com/jsapi?key=ABQIAAAAqjnNz7nS1oz2TluL6Us4RBSpx2xMF55H3f_A7npDT_KAwe27TRQqEtzezEqGCWq0NKFUH-hM4U_cnQ"type="text/javascript"></script>
+      	<script language="Javascript" type="text/javascript">
+      		google.load("jquery", "1");
+      		google.load("jqueryui", "1");
+      	</script>
+      	<script src="@routes.Assets.at("javascript/bootstrap-alerts.js")"></script>
     </head>
     <body>
-        
         <header class="topbar">
             <h1 class="fill">
-                <a href="@routes.Application.index()">
-                    Play 2.0 sample application &mdash; Computer database
-                </a>
+                <a href="@routes.Application.index()">ATX</a>
             </h1>
         </header>
         

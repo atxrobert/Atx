@@ -18,16 +18,13 @@ public class Application extends Controller {
   
   public static Result create() {
       Form<Entry> entryForm = form(Entry.class);
-      return ok(
-          createForm.render(entryForm)
-      );
+      return ok(createForm.render(entryForm));
   }
   
   public static Result save() {
       Form<Entry> entryForm = form(Entry.class).bindFromRequest();
-      if(entryForm.hasErrors()) {
-          return badRequest(createForm.render(entryForm));
-      }
+      if(entryForm.hasErrors())
+    	  return badRequest(createForm.render(entryForm));
       entryForm.get().save();
       flash("success", "Entry " + entryForm.get().id + " has been created");
       return index();
