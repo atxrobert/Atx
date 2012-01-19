@@ -128,6 +128,10 @@ public class Programmer extends Controller {
                 mInputFromPort.read(mBytesIn);
                 String value = new String(mBytesIn);
                 System.out.println("Response from Serial Device: "+value);
+                System.out.print("Response from Serial Device in hex: ");
+                for (char ch : value.toCharArray()) {
+                    System.out.print(Integer.toHexString(ch) + " ");
+                }
                 if(value.getBytes().equals(bereit)) {
                     for (char c : sendstring) {
                         mOutputToPort.write(c);
