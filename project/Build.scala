@@ -7,6 +7,8 @@ object ApplicationBuild extends Build {
     val appName         = "atx"
     val appVersion      = "1.0"
 
+    unmanagedBase <<= baseDirectory { base => base / "lib" }
+    
     val appDependencies = Seq(
       // Add your project dependencies here,
     )

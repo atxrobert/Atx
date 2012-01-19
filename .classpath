@@ -26,7 +26,7 @@
 	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/org.yaml/snakeyaml/1.9/bundles/snakeyaml.jar"/>
 	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/org.hibernate/hibernate-validator/4.2.0.Final/jars/hibernate-validator.jar"/>
 	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/javax.validation/validation-api/1.0.0.GA/jars/validation-api.jar"/>
-	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/org.springframework/spring-context/3.0.6.RELEASE/jars/spring-context.jar"/>
+	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/org.springframework/spring-context/3.0.6.RELEASE/jars/spring-context.jar" sourcepath="/Users/roberthj/.m2/repository/org/springframework/spring-context/3.0.6.RELEASE/spring-context-3.0.6.RELEASE-sources.jar"/>
 	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/org.springframework/spring-core/3.0.6.RELEASE/jars/spring-core.jar"/>
 	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/org.springframework/spring-beans/3.0.6.RELEASE/jars/spring-beans.jar"/>
 	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/joda-time/joda-time/2.0/jars/joda-time.jar"/>
@@ -73,5 +73,6 @@
 	<classpathentry kind="lib" path="/Users/roberthj/Documents/play/repository/local/org.scala-lang/scala-library/2.9.1/jars/scala-library.jar"/>
 	<classpathentry kind="lib" path="target/scala-2.9.1/classes"/>
 	<classpathentry kind="lib" path="target/scala-2.9.1/classes_managed"/>
+	<classpathentry kind="lib" path="lib/RXTXcomm.jar"/>
 	<classpathentry kind="output" path=".target/scala-2.9.1/classes"/>
 </classpath>
