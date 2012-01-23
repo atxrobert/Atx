@@ -24,6 +24,7 @@ public class Programmer extends Controller {
     public static final char space = 0x20;
     public static final char[] bereit = {0x3c ,0x3c ,0x3c ,0x42 ,0x45 ,0x52 ,0x45 ,0x49, 0x54 ,0x21 ,0x3e ,0x3e ,0x3e};
     public static final char[] ok = {0x3c ,0x3c ,0x3c ,0x4f, 0x4b,0x21 ,0x3e ,0x3e ,0x3e};
+    public static CommPortIdentifier portIdentifier = null;
 
     public static Result program() {
         try {
@@ -88,6 +89,7 @@ public class Programmer extends Controller {
             return ok(program.render("WIN! Message is " + new String(sendstring)));
         }
         catch (Exception e) {
+        	e.printStackTrace();
             return badRequest(program.render("ERROR! "+ e.getMessage()));
         }
 
@@ -97,17 +99,18 @@ public class Programmer extends Controller {
     private static void writeToBoard(char[] sendstring) throws Exception {
         OutputStream mOutputToPort = null;
         InputStream mInputFromPort = null;
+        SerialPort serialPort = null;
         try
         {
-            CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier("COM1");
+        	if(portIdentifier == null)
+        		portIdentifier = CommPortIdentifier.getPortIdentifier("COM1");
             if (portIdentifier.isCurrentlyOwned())
             {
                 throw new Exception("Port in use");
             }
             else {
                 System.out.println(portIdentifier.getName());
-
-                SerialPort serialPort = (SerialPort) portIdentifier.open("ListPortClass", 3000);
+                serialPort = (SerialPort) portIdentifier.open("ListPortClass", 3000);
                 int b = serialPort.getBaudRate();
                 System.out.println(Integer.toString(b));
                 serialPort.setSerialPortParams(b, SerialPort.DATABITS_8, SerialPort.STOPBITS_2, SerialPort.PARITY_NONE);
@@ -117,23 +120,27 @@ public class Programmer extends Controller {
                 mOutputToPort.write(ready);
                 mOutputToPort.flush();
                 System.out.println("Waiting for Reply \r\n");
-                Thread.sleep(5000);
+                Thread.sleep(1000);
                 byte mBytesIn [] = new byte[200];
                 mInputFromPort.read(mBytesIn);
                 mInputFromPort.read(mBytesIn);
                 String value = new String(mBytesIn).trim();
                 System.out.println("Response from Serial Device: "+value);
                 System.out.print("Response from Serial Device in hex: ");
+                System.out.println("");
                 for (char ch : value.toCharArray()) {
                     System.out.print(Integer.toHexString(ch) + " ");
                 }
-                if(true) {
-                    for (char c : sendstring) {
-                        mOutputToPort.write(c);
-                    }
+                if(true) {//check for ready
+                	
+                	byte[] sendarray = new byte[sendstring.length];
+                    for (int i = 0; i < sendstring.length; i++) {
+						sendarray[i] = (byte) sendstring[i];
+					}
+                    mOutputToPort.write(sendarray);
                     mOutputToPort.flush();
                     System.out.println("Waiting for Reply \r\n");
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                     mInputFromPort.read(mBytesIn);
                     mInputFromPort.read(mBytesIn);
                     value = new String(mBytesIn).trim();
@@ -142,7 +149,7 @@ public class Programmer extends Controller {
                     for (char ch : value.toCharArray()) {
                         System.out.print(Integer.toHexString(ch) + " ");
                     }
-                    if(value.getBytes().equals(ok)) {
+                    if(true) {//check for ok
                         return;
                     }
                 }
@@ -155,9 +162,14 @@ public class Programmer extends Controller {
         {
             throw ex;
         }
-        finally {
-            mOutputToPort.close(); 
-            mInputFromPort.close();
+        finally {//close the port and unload the dll(we try)
+        	if(serialPort != null)
+        		serialPort.close();
+        	if(mOutputToPort != null)
+        		mOutputToPort.close(); 
+        	if(mInputFromPort != null)
+        		mInputFromPort.close();
+            System.gc();
         }
     }
 
@@ -197,10 +209,10 @@ public class Programmer extends Controller {
         for (int i = 0; i < numberOfChecksumSpaces; i++) {
             spacePart += "20 ";
         }
-        System.out.print("Checksum in hex: " + spacePart);
+        /*System.out.print("Checksum in hex: " + spacePart);
         for (char ch : String.valueOf(result).toCharArray()) {
             System.out.print(Integer.toHexString(ch) + " ");
-        }
+        }*/
         int numberofzeros = length - String.valueOf(result).trim().length();
         StringBuffer spaces = new StringBuffer();
         for(int i = 0; i < numberofzeros ;i++)
