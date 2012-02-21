@@ -1,0 +1,292 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1053{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sa200\sl276\slmult1\lang29\f0\fs22\par
+ATS - Protocol\par
+Reverse engineered by Robert Hjelmberg - December 2011\par
+For educational purposes only!\par
+\par
+ATS uses  I/O request packet (IRP) to communicate over RS-232 with the display.\par
+All communication in this document are in hexadecimal form and are shown in [].\par
+Extra info and ascii representations are sometimes provided in ().\par
+Com port settings:\par
+BaudRate: 9600\par
+StopBits: 2\par
+Parity: 0\par
+WordLength: 8\par
+DTR/RTS: Enabled\par
+\par
+Communication protocol:\par
+Client: Sends [55] (U) to check if display is ready to recieve.\par
+Display: Answers [3c 3c 3c 42 45 52 45 49 54 21 3e 3e 3e] (<<<BEREIT!>>>) if it's ready\par
+Client: Sends data to XXXXXXX ( See data format )\par
+Display: Answers [3c 3c 3c 4f 4b 21 3e 3e 3e] (<<<OK!>>>) if it recieve data succesfully.\par
+\par
+Data format:\par
+The dataformat consists of 4 parts. Those are\par
+1. The start part [30 32 30 30 33 30] (020030)\par
+2. One or more Entries separated with the delimiter [02] (STX) ( See entry format )\par
+3. An end part [f3]\par
+4. A 8 byte checksum ( See checksum format )\par
+\par
+Entry format:\par
+\tab -This can be [42]BLOCK, [53]SCROLL or [46]FLOW\par
+\tab\tab -B [42] is followed by 2 bytes which is the change page delay from 1 to 99\tab\tab seconds in ascii.\par
+\tab\tab Then comes 60 bytes of text. In ascii.\par
+\tab\tab -S [53] is followed by 2 bytes which is the change of line delay from 1 to \tab\tab\tab 99 seconds in ascii.\par
+\tab\tab Then comes 30 bytes of text. In ascii.\par
+\tab\tab -F [46] is  followed by 2 bytes which is the flow pulse rangeing from 0.1 to \tab\tab 1.0 in ascii without the dot .Eg a pulse of 0.5 would be [30 35]\par
+\tab\tab  After the flow pulse comes 2 bytes defining which lane the text should  flow \tab\tab on. This can be either [30 31] (01) or [30 32] (02).\par
+\tab\tab Then comes 30 bytes of spaces [20]\par
+\tab\tab Then comes X bytes of text. The text is in ascii format.\par
+\tab All type of entries are delimited by [02].\par
+\tab The last entry should also have a trailing [02] after it.\par
+\par
+Checksum format:\par
+All the bytes from the start part to end part (both included) are summed.\par
+\par
+Examples:\par
+\par
+[29/11/2011 17:32:49] - Written data\par
+\par
+55                                              \tab U\par
+\par
+[29/11/2011 17:32:49] - Read data\par
+\par
+3c 3c 3c 42 45 52 45 49 54 21 3e 3e 3e          \tab <<<BEREIT!>>>\par
+\par
+[29/11/2011 17:32:50] - Written data\par
+\par
+30 32 30 30 33 30 42 30 31 48 45 4a 31 20 20 20 \tab 020030B01HEJ1   \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 02 f3 20 20 20 20 32 37 35 37    \tab      .\'f3    2757\par
+\par
+[29/11/2011 17:32:54] - Read data\par
+\par
+3c 3c 3c 4f 4b 21 3e 3e 3e                      \tab <<<OK!>>>\par
+\par
+[29/11/2011 17:35:39] - Written data\par
+\par
+55                                              \tab U\par
+\par
+[29/11/2011 17:35:39] - Read data\par
+\par
+3c 3c 3c 42 45 52 45 49 54 21 3e 3e 3e          \tab <<<BEREIT!>>>\par
+\par
+[29/11/2011 17:35:40] - Written data\par
+\par
+30 32 30 30 33 30 42 30 31 73 75 6e 65 20 20 20 \tab 020030B01sune   \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 02 f3 20 20 20 20 32 39 33 36    \tab      .\'f3    2936\par
+\par
+[29/11/2011 17:35:44] - Read data\par
+\par
+3c 3c 3c 4f 4b 21 3e 3e 3e                      \tab <<<OK!>>>\par
+\par
+[29/11/2011 17:36:47] - Written data\par
+\par
+55                                              \tab U\par
+\par
+[29/11/2011 17:36:47] - Read data\par
+\par
+3c 3c 3c 42 45 52 45 49 54 21 3e 3e 3e          \tab <<<BEREIT!>>>\par
+\par
+[29/11/2011 17:36:47] - Written data\par
+\par
+30 32 30 30 33 30 42 30 31 73 75 6e 65 20 20 20 \tab 020030B01sune   \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 02 f3 20 20 20 20 32 39 33 36    \tab      .\'f3    2936\par
+\par
+[29/11/2011 17:36:51] - Read data\par
+\par
+3c 3c 3c 4f 4b 21 3e 3e 3e                      \tab <<<OK!>>>\par
+\par
+[29/11/2011 17:37:43] - Written data\par
+\par
+55                                              \tab U\par
+\par
+[29/11/2011 17:37:43] - Read data\par
+\par
+3c 3c 3c 42 45 52 45 49 54 21 3e 3e 3e          \tab <<<BEREIT!>>>\par
+\par
+[29/11/2011 17:37:43] - Written data\par
+\par
+30 32 30 30 33 30 53 30 33 73 75 6e 65 20 20 20 \tab 020030S03sune   \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 02 f3 20 20 20 20 31 39 39 \tab        .\'f3    199\par
+35                                              \tab 5\par
+\par
+[29/11/2011 17:37:47] - Read data\par
+\par
+3c 3c 3c 4f 4b 21 3e 3e 3e                      \tab <<<OK!>>>\par
+\par
+[29/11/2011 17:42:43] - Written data\par
+\par
+55                                              \tab U\par
+\par
+[29/11/2011 17:42:43] - Read data\par
+\par
+3c 3c 3c 42 45 52 45 49 54 21 3e 3e 3e          \tab <<<BEREIT!>>>\par
+\par
+[29/11/2011 17:42:43] - Written data\par
+\par
+30 32 30 30 33 30 46 30 35 30 31 20 20 20 20 20 \tab 020030F0501     \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 73 75 6e 65 02 f3 20 \tab          sune.\'f3 \par
+20 20 20 32 32 30 39                            \tab    2209\par
+\par
+[29/11/2011 17:42:47] - Read data\par
+\par
+3c 3c 3c 4f 4b 21 3e 3e 3e                      \tab <<<OK!>>>\par
+\par
+[29/11/2011 17:47:08] - Written data\par
+\par
+55                                              \tab U\par
+\par
+[29/11/2011 17:47:08] - Read data\par
+\par
+3c 3c 3c 42 45 52 45 49 54 21 3e 3e 3e          \tab <<<BEREIT!>>>\par
+\par
+[29/11/2011 17:47:08] - Written data\par
+\par
+30 32 30 30 33 30 46 30 35 30 31 20 20 20 20 20 \tab 020030F0501     \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 20 20 20 20 20 20 20 20 53 75 6e 65 02 46 30 \tab          Sune.F0\par
+35 30 31 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab 501             \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 \tab                 \par
+20 53 75 6e 65 20 69 67 65 6e 02 f3 20 20 20 20 \tab  Sune igen.\'f3    \par
+34 32 36 39                                     \tab 4269\par
+\par
+[29/11/2011 17:47:12] - Read data\par
+\par
+3c 3c 3c 4f 4b 21 3e 3e 3e                      \tab <<<OK!>>>\par
+\par
+\par
+Here are some additional dumps of only some data:\par
+\par
+30 32 30 30 33 30 46 30 35 30 31 20 20 20 20 20      020030F0501     \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 53 75 6E 65 02 46 30               Sune.F0\par
+35 30 31 20 20 20 20 20 20 20 20 20 20 20 20 20      501             \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 53 75 6E 65 20 69 67 65 6E 6E 02 F3 20 20 20       Sune igenn..   \par
+20 34 33 37 39                                        4379\par
+\par
+\par
+\par
+30 32 30 30 33 30 46 30 35 30 31 20 20 20 20 20      020030F0501     \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 53 75 6E 65 02 46 30               Sune.F0\par
+35 30 31 20 20 20 20 20 20 20 20 20 20 20 20 20      501             \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 53 75 6E 65 20 69 67 65 6E 6E 6E 6E 6E 6E 6E       Sune igennnnnnn\par
+6E 6E 6E 6E 6E 6E 6E 02 F3 20 20 20 20 35 36 39      nnnnnnn..    569\par
+39                                                   9\par
+\par
+\par
+30 32 30 30 33 30 42 30 33 41 20 20 20 20 20 20      020030B03A      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 02 F3 20 20 20 20 32 36 35 36              ..    2656\par
+\par
+\par
+\par
+30 32 30 30 33 30 42 30 33 41 20 20 20 20 20 20      020030B03A      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 02 42 30 33 42 42 20 20 20 20 20           .B03BB     \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 02 42 30 33 43 43 43 20 20 20 20           .B03CCC    \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 02 F3 20 20 20 20 37 30 30 33              ..    7003\par
+\par
+\par
+\par
+30 32 30 30 33 30 42 30 33 41 20 20 20 20 20 20      020030B03A      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 02 46 30 35 30 31 20 20 20 20 20           .F0501     \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 54 65 73 74 02 F3 20               Test.. \par
+20 20 20 34 33 30 32                                    4302\par
+\par
+\par
+\par
+30 32 30 30 33 30 42 30 33 41 20 20 20 20 20 20      020030B03A      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 02 53 30 30 54 65 73 74 20 20 20           .S00Test   \par
+20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                      \par
+20 20 20 20 20 20 20 02 F3 20 20 20 20 34 30 38             ..    408\par
+35                                                   5\par
+\par
+\par
+Here is a small java program that calculates the checksum for some test messages:\par
+It should work, it's not tested to 100%.\par
+\par
+public class main \{\par
+\tab public static void main(String[] args) throws Exception \{\par
+\tab\tab\par
+\tab\tab char[] startpart = \{ 0x30, 0x32, 0x30, 0x30, 0x33, 0x30 \};\par
+\tab\tab //See entry format to build custom messages\par
+\tab\tab String[] messages = \{ "B03A block" , "S00A scroll" ,"F0501A flow" \};\par
+\tab\tab char messageDelimiter = 0x02;\par
+\tab\tab char endpart = 0xf3;\par
+\tab\tab char space = 0x20;\par
+\tab\tab int result = 0;\par
+\tab\tab int numberOfSpaces = 0;\par
+\tab\tab\par
+\tab\tab for (int i = 0; i < startpart.length; i++) \{\par
+\tab\tab\tab result+=startpart[i];\par
+\tab\tab\}\par
+\tab\tab for (String msg : messages) \{\par
+\tab\tab\tab String type = msg.substring(0,1);\par
+\tab\tab\tab if("B".equals(type))\par
+\tab\tab\tab\tab numberOfSpaces = 63 - msg.length();\par
+\tab\tab\tab if("S".equals(type))\par
+\tab\tab\tab\tab numberOfSpaces = 33 - msg.length();\par
+\tab\tab\tab if("F".equals(type))\par
+\tab\tab\tab\tab numberOfSpaces = 30;\par
+\tab\tab\tab\par
+\tab\tab\tab for (char letter : msg.toCharArray()) \{\par
+\tab\tab\tab\tab result += letter;\par
+\tab\tab\tab\}\tab\tab\par
+\tab\tab\tab for (int i = 0; i < numberOfSpaces; i++) \{\par
+\tab\tab\tab\tab result += space;\par
+\tab\tab\tab\}\par
+\tab\tab\tab result+=messageDelimiter;\par
+\tab\tab\}\par
+\tab\tab result+=endpart;\par
+\tab\tab\par
+\tab\tab String calculatedPart = String.valueOf(result);\par
+\tab\tab int numberOfChecksumSpaces = 8 - calculatedPart.length();\par
+\tab\tab String spacePart = "";\par
+\tab\tab for (int i = 0; i < numberOfChecksumSpaces; i++) \{\par
+\tab\tab\tab spacePart += "20 ";\par
+\tab\tab\}\par
+\tab\tab System.out.print("Checksum in hex: " + spacePart);\par
+\tab\tab for (char ch : String.valueOf(result).toCharArray()) \{\par
+\tab         System.out.print(Integer.toHexString(ch) + " ");\par
+\tab     \}\par
+\tab\}\par
+\}\par
+\par
+\par
+\par
+\par
+\par
+\par
+}
+ 

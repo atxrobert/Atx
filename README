@@ -1,0 +1,5 @@
+All the important stuff are in app/controllers/Programmer.java
+The checksum function for FLOW is broken.
+It should be easy to fix since the examplecode in the protocol.rtf calculates a right one.
+
+/R
